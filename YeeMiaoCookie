@@ -19,12 +19,13 @@ let yeemiaoclientInfo="";
                 $nobyda.write(clientInfo,"YeeMiaoClientInfo");
                 $nobyda.notify("小豆苗","获取Cookie",cookie);
 
-                signin();
+                //signin();
             }
         }
     }else {
         $nobyda.notify("小豆苗", "写入Cookie失败", "请检查匹配URL或配置内脚本类型 ⚠️");
     }
+    $nobyda.done();
 }());
 
 async function signin(){
@@ -254,4 +255,4 @@ function nobyda() {
         done
     }
 };
-$nobyda.done();
+
