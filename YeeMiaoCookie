@@ -4,7 +4,7 @@ let yeemiaoToken="";
 let yeemiaoclientInfo="";
 
 (async function readCookie(){
-    if($nobyda.isRequest()){
+    if($nobyda.isRequest){
         console.log($request.url);
         if($request.url==='https://dm.yeemiao.com/point/getSigninDays'){
             var cookie=$request.headers["cookie"];
