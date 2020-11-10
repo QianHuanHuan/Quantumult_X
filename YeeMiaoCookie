@@ -4,8 +4,8 @@ let yeemiaoToken="";
 let yeemiaoclientInfo="";
 
 (async function readCookie(){
-    console.log("获取撮合拍cookie");
     if($nobyda.isRequest()){
+        console.log($request.url);
         if($request.url==='https://dm.yeemiao.com/point/getSigninDays'){
             var cookie=$request.headers["cookie"];
             var token=$request.headers["token"];
