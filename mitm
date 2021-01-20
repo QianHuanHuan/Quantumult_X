@@ -11,7 +11,7 @@
 # Quantumult 界面中的延迟测试方式均为网页响应性测试，显示的最终延迟均为通过对应节点访问测试网页获得 HTTP 响应所需要时间。
 # 由于 Trojan 协议为无响应校验协议，使得 HTTP 检测方式即使获得了 HTTP 响应，也不代表节点一定可用。
 #
-# The dns_exclusion_list contains the domains that disabled the placeholder IP(198.18.*), domains that are not in the dns_exclusion_list all have placeholder IP enabled and have turned on the resolve-on-remote setting.
+# The dns_exclusion_list contains the domains that disabled the placeholder IP(240.*), domains that are not in the dns_exclusion_list all have placeholder IP enabled and have turned on the resolve-on-remote setting.
 #
 # The udp_whitelist contains the destination UDP port, empty means all the ports are in udp_whitelist. UDP packtes(through Quantumult tunnel interface) with destination ports that are not in the udp_whitelist will be dropped. This setting has nothing to do with the policy and has nothing to do with the proxy(server) port either.
 #
@@ -33,13 +33,11 @@ dns_exclusion_list=*.cmpassport.com, *.jegotrip.com.cn, *.icitymobile.mobi, id6.
 
 #
 # The DNS servers fetched from current network(system) will always be used for better performance(you can disable this feature by using "no-system", but you should at least add one customized DNS server like "server=223.5.5.5").
-# When no-ipv6 is set, the DNS module of Quanumult X Tunnel will directly let the AAAA query fail but still allow the A query from IPv6 DNS servers.
 # The result of query will only be used for evaluating filter or connecting through direct policy, when connecting through server the result will not be used and Quantumult will never know the destination IP of related domain.
 # Specially directly set 127.0.0.1 for a domain is not allowed in here. if you want some domain(eg: example.com) to be 127.0.0.1, just add "host, example.com, reject" to the "filter_local" section. The reject action will return DNS response with 127.0.0.1 to the query.
 #
 [dns]
 ;no-system
-no-ipv6
 server=223.5.5.5
 server=114.114.114.114
 server=119.29.29.29
@@ -57,16 +55,13 @@ server=8.8.8.8
 # available policy points to the first available server in candidates based on server_check_url(concurrent url latency test will be immediately launched when the policy has been triggered and the policy result is unavailable. If no network request is taking the policy at that time, that means the policy is in the idle state and the test won't be launched even if the server is down. At that time you can update the server status by manually launching the test, but it doesn't make any sense).
 # round-robin policy points to the next server in candidates for next connection.
 # ssid policy points to the server depending on the network environment.
-# Param resource-tag-regex and server-tag-regex only work for static, available and round-robin type of polices.
 #
 [policy]
+static=TikTok, direct, proxy, reject
 ;static=policy-name-1, Sample-A, Sample-B, Sample-C, img-url=http://example.com/icon.png
 ;available=policy-name-2, Sample-A, Sample-B, Sample-C
 ;round-robin=policy-name-3, Sample-A, Sample-B, Sample-C
 ;ssid=policy-name-4, Sample-A, Sample-B, LINK_22E171:Sample-B, LINK_22E172:Sample-C
-;static=policy-name-5, resource-tag-regex=^sample, server-tag-regex=^example, img-url=http://example.com/icon.png
-;available=policy-name-6, resource-tag-regex=^sample, server-tag-regex=^example
-;round-robin=policy-name-7, resource-tag-regex=^sample, server-tag-regex=^example
 
 #
 # Params "tag" and "enabled" are optional.
@@ -74,6 +69,10 @@ server=8.8.8.8
 # You can set update-interval=172800 to customize your auto sync interval(seconds), negative number means disable auto sync.
 #
 [server_remote]
+https://bigairport.icu/api/v1/client/subscribe?token=c70d77e1991bf71bc9e4da6f6164940c, tag=大机场, update-interval=86400, opt-parser=false, enabled=true
+https://www.paofusub.com/link/gVZmujxxGpKz0CHa?sub=1&class=12, tag=旗舰, update-interval=86400, opt-parser=false, enabled=true
+https://api.ssrnode.cc/link/h03PdWYwSiOgSbF0?sub=1, tag=myssr, update-interval=86400, opt-parser=false, enabled=true
+https://www.paofusub.com/link/9tLEtkyNhJNji4z6?sub=1&class=8, tag=大流量, update-interval=86400, opt-parser=false, enabled=true
 ;https://raw.githubusercontent.com/crossutility/Quantumult-X/master/server.txt, tag=Sample-01
 ;https://raw.githubusercontent.com/crossutility/Quantumult-X/master/server.txt, opt-parser=true, tag=Sample-01
 ;https://raw.githubusercontent.com/crossutility/Quantumult-X/master/server.txt, update-interval=-1, tag=Sample-01
@@ -84,12 +83,14 @@ server=8.8.8.8
 # When there is a force-policy, then the policy in filter of remote resource will be ignored and the force-policy will be used.
 #
 [filter_remote]
+https://raw.githubusercontent.com/ConnersHua/Profiles/master/Quantumult/X/Filter/Media/TikTok.list, update-interval=86400, opt-parser=false, enabled=true
 ;https://raw.githubusercontent.com/crossutility/Quantumult-X/master/filter.txt, tag=Sample, force-policy=your-policy-name, enabled=true
 
 #
 # Params "tag" and "enabled" are optional.
 #
 [rewrite_remote]
+https://raw.githubusercontent.com/NobyDa/Script/master/QuantumultX/Js_Remote_Cookie.conf, update-interval=86400, opt-parser=true, enabled=true
 ;https://raw.githubusercontent.com/crossutility/Quantumult-X/master/sample-import-rewrite.txt, tag=Sample, enabled=true
 
 #
@@ -157,17 +158,15 @@ final, proxy
 # The "reject-dict" returns HTTP status code 200 with content of empty json object.
 # The "reject-array" returns HTTP status code 200 with content of empty json array.
 # The "request-header" works for all the http headers not just one single header, so you can match two or more headers including CRLF in one regular expression.
-# The "echo-response" just reply back the body of the content type response for matched URL, the body file should be saved at "On My iPhone - Quantumult X - Data".
-# The length and encoding related HTTP header fields will be automatically processed by Quantumult if the "rewrite" is body related, so you should not handle them by yourself. The max supported decompressed response body size is 2 * 1024kB(iOS 14+) for response-body and script-response-body.
+# The length and encoding related HTTP header fields will be automatically processed by Quantumult if the "rewrite" is body related, so you should not handle them by yourself. The max supported response size is 256kB(decompressed) for response-body and script-response-body.
 # The body related rewrite will not be executed if the body is empty.
 # When using javascript in rewrite, you can use those objects: $request, $response, $notify(title, subtitle, message), console.log(message) and Quantumult's built-in objects all have prefix "$".
 # Supports: $request.scheme, $request.method, $request.url, $request.path, $request.headers, $response.statusCode, $response.headers, $response.body
 # The $notify(title, subtitle, message) will post iOS notifications if Quantumult notification has been enabled.
 # The $prefs is for persistent store: $prefs.valueForKey(key), $prefs.setValueForKey(value, key), $prefs.removeValueForKey(key), $prefs.removeAllValues().
-# The console.log(message)  will output logs to Quantumult log file.
+# The console.log(message)  will output logs to Quantumult log file if the log level is "debug".
 # The setTimeout(function() { }, interval) will run function after interval(ms).
-# The scripts for script-request-header, script-request-body, script-response-header, script-response-body, script-echo-response and script-analyze-echo-response should be saved in local "On My iPhone - Quantumult X - Scripts" or "iCloud Drive - Quantumult X - Scripts". Samples can be found at https://github.com/crossutility/Quantumult-X
-# The difference between script-analyze-echo-response and script-echo-response is that the former will wait for the request body.
+# The scripts for script-request-header, script-request-body, script-response-header, script-response-body and script-echo-response should be saved in local "On My iPhone - Quantumult X - Scripts" or "iCloud Drive - Quantumult X - Scripts". Samples can be found at https://github.com/crossutility/Quantumult-X
 #
 [rewrite_local]
 ;^http://example\.com/resource1/1/ url reject
@@ -181,7 +180,6 @@ final, proxy
 ;^http://example\.com/resource4/ url request-header (\r\n)User-Agent:.+(\r\n) request-header $1User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36$2
 ;^http://example\.com/resource5/ url request-body "info":\[.+\],"others" request-body "info":[],"others"
 ;^http://example\.com/resource5/ url response-body "info":\[.+\],"others" response-body "info":[],"others"
-;^http://example\.com/resource5/ url echo-response text/html echo-response index.html
 ;^http://example\.com/resource6/ url script-response-body response-body.js
 ;^http://example\.com/resource7/ url script-echo-response script-echo.js
 ;^http://example\.com/resource8/ url script-response-header response-header.js
@@ -195,38 +193,26 @@ final, proxy
 # The scripts should be saved in local "On My iPhone - Quantumult X - Scripts" or "iCloud Drive - Quantumult X - Scripts". Samples can be found at https://github.com/crossutility/Quantumult-X/blob/master/sample-task.js
 # The default HTTP request timeout is 10 seconds.
 #
-# Supports 5 or 6 fields of cron excluding the command field.
+# Supports 5 fields of cron excluding the command field.
 #
 [task_local]
+0 1 * * * https://raw.githubusercontent.com/QianHuanHuan/Quantumult_X/default/surge_js.js, tag=tga, enabled=true
+0 * * * * 204DBC4D4AC9.js, tag=测试机器人, enabled=true
+0 * * * * B3280493859E.js, enabled=false
 ;* * * * * sample-task.js
-;* * * * * sample-task2.js, img-url=https://raw.githubusercontent.com/crossutility/Quantumult-X/master/quantumult-x.png, tag=Sample, enabled=true
-
-
-#
-# Deploy a local HTTP server and use JavaScript for data processing.
-# The input variables are $reqeust.url, $reqeust.path, $reqeust.headers, $reqeust.body
-# The output using $done like $done({status:"HTTP/1.1 200 OK"}, headers:{}, body:"here is a string") to sendback the response.
-# Further more you can use a signature or any other validation method to verify if the request is legitimate.
-# After the deployment you should visit it through http://127.0.0.1:9999/your-path/your-api/.
-#
-[http_backend]
-;https://raw.githubusercontent.com/crossutility/Quantumult-X/master/sample-backend.js, tag=fileConverter, path=^/example/v1/
-;preference.js, tag=userPreference, path=^/preference/v1/, img-url=https://example.com, enabled=true
-;convert.js, tag=fileConverter, path=^/convert/v1/
 
 
 #
 # Only the TLS SNI or destination address in "hostname" will be handled by MitM.
 #
-# By default when MitM enabled for the HTTPS request, Quantumult X fetches the certificate(the certificate will be cached) from the original site, keeps most of the needed original certificate informations and re-signs it using the MitM root CA, this is the recommended(and more compatible) way of creating MitM certificate.
-# Occasionally some users like to debug the HTTPS request that its domain does not exist, so the original certificate doesn't even exist. This is when the param simple_cert_hostname comes up. The HTTPS request with TLS SNI names that are in the simple_cert_hostname(and hostname) will using the pure local generated MitM  certificate.
-#
-# Important !!! You should always keep your CA passphrase and p12 private.
+# You should always keep your CA passphrase and p12 private.
 #
 [mitm]
+hostname = *.feihuaxy.com
+passphrase = 81C5CF63
+p12 = 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
 ;passphrase =
 ;p12 =
 ;skip_validating_cert = false
 ;force_sni_domain_name = false
-;hostname = *.example.com, *.sample.com, non-existed-domain.com, *.non-connected-domain.com
-;simple_cert_hostname = non-existed-domain.com, *.non-connected-domain.com
+;hostname = *.example.com, *.sample.com
