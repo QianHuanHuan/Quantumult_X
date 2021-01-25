@@ -33,11 +33,11 @@ function getInfo() {
                 let mis = new Date().getMinutes();
                 let zbk = res.attend_list[0].register_time;
                 let wbk = res.attend_list[1].register_time;
-                if(hrs>7&&hrs<17&&zbk){
+                if(hrs>7&&hrs<17&&!zbk){
                     $tool.msg('打卡提醒','早班卡未打','打卡时间为|'+zbk);
-                }else if(hrs===17&&wbk&&mis>=30){
+                }else if(hrs===17&&!wbk&&mis>=30){
                     $tool.msg('打卡提醒','下班卡未打','打卡时间为|'+wbk);
-                }else if(hrs>17&&wbk){
+                }else if(hrs>17&&!wbk){
                     $tool.msg('打卡提醒','下班卡未打','打卡时间为|'+wbk);
                 }
             }
